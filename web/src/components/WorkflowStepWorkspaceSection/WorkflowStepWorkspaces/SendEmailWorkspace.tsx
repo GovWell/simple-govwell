@@ -31,6 +31,19 @@ export default function SendEmailWorkspace({
     })
   }, [isDisabled, onWorkflowStepCompleted, workflowStepId, subject, body])
 
+  const handleSubjectChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSubject(e.target.value)
+    },
+    []
+  )
+  const handleBodyChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setBody(e.target.value)
+    },
+    []
+  )
+
   return (
     <div className="space-y-3">
       <div>
@@ -45,7 +58,7 @@ export default function SendEmailWorkspace({
           className="w-full rounded border px-3 py-2 text-sm outline-none focus:ring"
           id="send-email-subject"
           value={subject}
-          onChange={(e) => setSubject(e.target.value)}
+          onChange={handleSubjectChange}
           placeholder="Enter email subject"
         />
       </div>
@@ -61,7 +74,7 @@ export default function SendEmailWorkspace({
           className="h-32 w-full rounded border px-3 py-2 text-sm outline-none focus:ring"
           id="send-email-body"
           value={body}
-          onChange={(e) => setBody(e.target.value)}
+          onChange={handleBodyChange}
           placeholder="Write your email body"
         />
       </div>

@@ -53,6 +53,13 @@ export default function CreateRecordModal({
     }
   }, [canCreate, createRecord, onClose, onCreated, steps])
 
+  const handleNewStepChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setNewStep(e.target.value as WorkflowStepType)
+    },
+    []
+  )
+
   return (
     <Modal>
       <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
@@ -92,7 +99,7 @@ export default function CreateRecordModal({
             <select
               id="new-step"
               value={newStep}
-              onChange={(e) => setNewStep(e.target.value as WorkflowStepType)}
+              onChange={handleNewStepChange}
               className="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
               {WorkflowStepTypes.map((t) => (
