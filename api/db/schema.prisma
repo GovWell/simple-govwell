@@ -14,11 +14,74 @@ generator client {
   binaryTargets = "native"
 }
 
-// Define your own datamodels here and run `yarn redwood prisma migrate dev`
-// to create migrations for them and apply to your dev DB.
-// TODO: Please remove the following example:
-model UserExample {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+enum RecordStatus {
+  Submitted
+  InProgress
+  Rejected
+  Completed
+  Issued
+}
+
+model Record {
+  id Int @id @default(autoincrement())
+
+  // primitives
+  status RecordStatus
+
+  // timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // relations
+  workflowSteps WorkflowStep[]
+}
+
+enum WorkflowStepType {
+  Review
+  SendEmail
+  IssueRecord
+}
+
+enum WorkflowStepStatus {
+  Pending
+  Completed
+}
+
+model WorkflowStep {
+  id Int @id @default(autoincrement())
+
+  // primitives
+  order  Int // 0-based index
+  status WorkflowStepStatus
+  type   WorkflowStepType
+
+  // timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // foreign keys
+  recordId Int
+
+  // relations
+  record Record  @relation(fields: [recordId], references: [id])
+  emails Email[]
+
+  @@index([recordId])
+}
+
+model Email {
+  id Int @id @default(autoincrement())
+
+  // primitives
+  subject String
+  body    String
+
+  // timestamps
+  createdAt DateTime @default(now())
+
+  // relations
+  workflowStepId Int
+  workflowStep   WorkflowStep @relation(fields: [workflowStepId], references: [id])
+
+  @@index([workflowStepId])
 }

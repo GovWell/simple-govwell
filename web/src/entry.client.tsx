@@ -1,3 +1,4 @@
+import { StrictMode } from 'react'
 import { hydrateRoot, createRoot } from 'react-dom/client'
 
 import App from './App'
@@ -21,15 +22,19 @@ if (!redwoodAppElement) {
 if (redwoodAppElement.children?.length > 0) {
   hydrateRoot(
     redwoodAppElement,
-    <App>
-      <Routes />
-    </App>
+    <StrictMode>
+      <App>
+        <Routes />
+      </App>
+    </StrictMode>
   )
 } else {
   const root = createRoot(redwoodAppElement)
   root.render(
-    <App>
-      <Routes />
-    </App>
+    <StrictMode>
+      <App>
+        <Routes />
+      </App>
+    </StrictMode>
   )
 }
