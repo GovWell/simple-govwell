@@ -6,20 +6,8 @@ import CreateRecordModal from 'src/components/CreateRecordModal/CreateRecordModa
 import RecordStatusPill from 'src/components/RecordStatusPill/RecordStatusPill'
 import { useGetRecords } from 'src/fetch/records'
 import useDisclosure from 'src/hooks/use-disclosure'
+import { formatDateTime } from 'src/utils/date-utils'
 import { getCurrentWorkflowStep } from 'src/utils/workflow-step-utils'
-
-const formatDateTime = (iso: string): string => {
-  const d = new Date(iso)
-  return d.toLocaleString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
-
-//
 
 const RecordsPage = () => {
   const { data, loading, error } = useGetRecords()
