@@ -1,21 +1,26 @@
 import { useCallback } from 'react'
 
-import { CompleteWorkflowStepInput } from 'types/graphql'
+import {
+  CompleteWorkflowStepTaskInput,
+  WorkflowStepFragment,
+} from 'types/graphql'
 
 type Props = {
-  workflowStepId: number
-  onWorkflowStepCompleted: (input: CompleteWorkflowStepInput) => void
+  workflowStep: WorkflowStepFragment
+  onWorkflowStepTaskCompleted: (input: CompleteWorkflowStepTaskInput) => void
   loading?: boolean
 }
 
 export default function IssueRecordWorkspace({
-  workflowStepId,
-  onWorkflowStepCompleted,
+  workflowStep,
+  onWorkflowStepTaskCompleted,
   loading,
 }: Props) {
   const handleClick = useCallback(() => {
-    onWorkflowStepCompleted({ id: workflowStepId })
-  }, [onWorkflowStepCompleted, workflowStepId])
+    const firstTaskId = workflowStep.workflowStepTasks?.[0]?.id
+    if (firstTaskId == null) return
+    onWorkflowStepTaskCompleted({ id: firstTaskId })
+  }, [onWorkflowStepTaskCompleted, workflowStep])
 
   return (
     <div>

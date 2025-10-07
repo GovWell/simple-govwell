@@ -1,72 +1,57 @@
 import {
+  Prisma,
   RecordStatus,
   WorkflowStepStatus,
-  WorkflowStepType,
+  WorkflowStepTaskStatus,
 } from '@prisma/client'
-import type { MutationResolvers } from 'types/graphql'
 
-import { db } from 'src/lib/db'
+type UpdateWorkflowStepParams = {
+  tx: Prisma.TransactionClient
+  workflowStepId: number
+}
 
-export const completeWorkflowStep: MutationResolvers['completeWorkflowStep'] =
-  async ({ input }) => {
-    const { id, sendEmailInput } = input
+export const updateWorkflowStep = async ({
+  tx,
+  workflowStepId,
+}: UpdateWorkflowStepParams) => {
+  const workflowStep = await tx.workflowStep.findUniqueOrThrow({
+    where: { id: workflowStepId },
+    include: {
+      workflowStepTasks: true,
+    },
+  })
 
-    return db.$transaction(async (tx) => {
-      // Load the step with its record and sibling steps
-      const step = await tx.workflowStep.findUniqueOrThrow({
-        where: { id },
-        include: {
-          record: {
-            include: {
-              workflowSteps: { orderBy: { order: 'asc' } },
-            },
-          },
-        },
-      })
+  // If all tasks are completed, update the step status to Completed
+  if (
+    workflowStep.workflowStepTasks.every(
+      (task) => task.status === WorkflowStepTaskStatus.Completed
+    )
+  ) {
+    await tx.workflowStep.update({
+      where: { id: workflowStepId },
+      data: { status: WorkflowStepStatus.Completed },
+    })
 
-      // Validate inputs for SendEmail
-      if (step.type === WorkflowStepType.SendEmail) {
-        if (!sendEmailInput?.subject || !sendEmailInput?.body) {
-          throw new Error(
-            'sendEmailInput is required for SendEmail workflow steps'
-          )
-        }
+    const record = await tx.record.findUniqueOrThrow({
+      where: { id: workflowStep.recordId },
+      include: {
+        workflowSteps: true,
+      },
+    })
 
-        // Create the email associated with this step
-        await tx.email.create({
-          data: {
-            subject: sendEmailInput.subject,
-            body: sendEmailInput.body,
-            workflowStepId: step.id,
-          },
-        })
-      }
-
-      // Mark workflow step as completed
-      const updatedStep = await tx.workflowStep.update({
-        where: { id: step.id },
-        data: { status: WorkflowStepStatus.Completed },
-      })
-
-      // If IssueRecord, mark record as Issued immediately
-      if (step.type === WorkflowStepType.IssueRecord) {
+    // If the record is not Issued, check to see if the record is complete
+    if (record.status !== RecordStatus.Issued) {
+      // If all steps are completed, update the record status to Completed
+      if (
+        record.workflowSteps.every(
+          (step) => step.status === WorkflowStepStatus.Completed
+        )
+      ) {
         await tx.record.update({
-          where: { id: step.recordId },
-          data: { status: RecordStatus.Issued },
-        })
-        return updatedStep
-      }
-
-      // If last step and not IssueRecord, mark record as Completed
-      const steps = step.record.workflowSteps
-      const isLast = steps.length > 0 && steps[steps.length - 1].id === step.id
-      if (isLast) {
-        await tx.record.update({
-          where: { id: step.recordId },
+          where: { id: workflowStep.recordId },
           data: { status: RecordStatus.Completed },
         })
       }
-
-      return updatedStep
-    })
+    }
   }
+}

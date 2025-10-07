@@ -1,16 +1,19 @@
 import { useCallback, useMemo, useState } from 'react'
 
-import { CompleteWorkflowStepInput } from 'types/graphql'
+import {
+  CompleteWorkflowStepTaskInput,
+  WorkflowStepFragment,
+} from 'types/graphql'
 
 type Props = {
-  workflowStepId: number
-  onWorkflowStepCompleted: (input: CompleteWorkflowStepInput) => void
+  workflowStep: WorkflowStepFragment
+  onWorkflowStepTaskCompleted: (input: CompleteWorkflowStepTaskInput) => void
   loading?: boolean
 }
 
 export default function SendEmailWorkspace({
-  workflowStepId,
-  onWorkflowStepCompleted,
+  workflowStep,
+  onWorkflowStepTaskCompleted,
   loading,
 }: Props) {
   const [subject, setSubject] = useState('')
@@ -25,11 +28,14 @@ export default function SendEmailWorkspace({
       return
     }
 
-    onWorkflowStepCompleted({
-      id: workflowStepId,
+    const firstTaskId = workflowStep.workflowStepTasks?.[0]?.id
+    if (firstTaskId == null) return
+
+    onWorkflowStepTaskCompleted({
+      id: firstTaskId,
       sendEmailInput: { subject, body },
     })
-  }, [isDisabled, onWorkflowStepCompleted, workflowStepId, subject, body])
+  }, [isDisabled, onWorkflowStepTaskCompleted, workflowStep, subject, body])
 
   const handleSubjectChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

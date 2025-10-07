@@ -7,6 +7,7 @@ Simple GovWell is a minimal RedwoodJS app for managing records through step‑ba
 Technologies:
 - RedwoodJS: RedwoodJS is a full‑stack framework that connects the React web side, the GraphQL API side, and a Prisma‑backed database using a single CLI and an opinionated project structure.
 - React: React is a declarative component library used to build the web application's user interface with JSX and hooks.
+- Tailwind: Tailwind CSS lets you style elements by adding simple class names in your markup (e.g., `p-4` for padding, `flex` for layout), so you can design without writing custom CSS.
 - GraphQL: GraphQL is a typed query language and runtime that lets the web side fetch exactly the data it needs from the API via a well‑defined schema.
 - Prisma: Prisma is a type‑safe ORM that defines the data model, applies database migrations, and generates a client for database access in the API.
 - SQLite: SQLite is a lightweight embedded relational database used for local development, stored at `api/db/dev.db`.
@@ -26,6 +27,16 @@ yarn rw dev
 - `yarn mig`: Applies Prisma migrations to the development SQLite database and regenerates the Prisma Client; if configured, it also runs the seed script.
 - `yarn gql`: Generates type‑safe GraphQL TypeScript definitions for both sides at `api/types/graphql.d.ts` and `web/types/graphql.d.ts`.
 - `yarn rw dev`: Starts both the API GraphQL server and the Vite‑powered web dev server with hot reload, available at http://localhost:8910.
+
+## System Architecture
+
+- **Record**: Top‑level entity representing a case, permit, business license, etc that is being processed by the government jurisdiction. A `Record` has many `WorkflowStep`s.
+- **WorkflowStep**: A stage in the record’s lifecycle. Fields include `order` (0‑based index), `type` (`Review`, `SendEmail`, `IssueRecord`), and `status` (`Pending`, `Completed`). Each `WorkflowStep` belongs to a single `Record` and has many `WorkflowStepTask`s.
+- **WorkflowStepTask**: The smallest actionable unit inside a step. Fields include `order`, `type`, and `status`. Each task belongs to a single `WorkflowStep`.
+
+### Relationships
+  - One `Record` → many `WorkflowStep`s (`recordId` foreign key on `WorkflowStep`).
+  - One `WorkflowStep` → many `WorkflowStepTask`s (`workflowStepId` foreign key on `WorkflowStepTask`).
 
 ## Repository Structure
 

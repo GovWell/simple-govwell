@@ -26,7 +26,13 @@ export const createRecord: MutationResolvers['createRecord'] = async ({
 
   const recordWithRelations = await db.record.findUniqueOrThrow({
     where: { id: createdRecord.id },
-    include: { workflowSteps: true },
+    include: {
+      workflowSteps: {
+        include: {
+          workflowStepTasks: true,
+        },
+      },
+    },
   })
 
   return recordWithRelations

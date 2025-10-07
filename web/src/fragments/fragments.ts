@@ -1,5 +1,14 @@
 import { fragmentRegistry } from '@redwoodjs/web/apollo'
 
+export const WorkflowStepTaskFragment = gql`
+  fragment WorkflowStepTaskFragment on WorkflowStepTask {
+    id
+    order
+    type
+    status
+  }
+`
+
 export const WorkflowStepFragment = gql`
   fragment WorkflowStepFragment on WorkflowStep {
     id
@@ -8,6 +17,9 @@ export const WorkflowStepFragment = gql`
     status
     createdAt
     updatedAt
+    workflowStepTasks {
+      ...WorkflowStepTaskFragment
+    }
   }
 `
 
@@ -23,4 +35,8 @@ export const RecordFragment = gql`
   }
 `
 
-fragmentRegistry.register(WorkflowStepFragment, RecordFragment)
+fragmentRegistry.register(
+  WorkflowStepFragment,
+  RecordFragment,
+  WorkflowStepTaskFragment
+)

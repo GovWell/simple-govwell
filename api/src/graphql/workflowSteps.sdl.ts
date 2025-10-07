@@ -6,6 +6,7 @@ export const schema = gql`
     type: WorkflowStepType!
     createdAt: DateTime!
     updatedAt: DateTime!
+    workflowStepTasks: [WorkflowStepTask!]
   }
 
   enum WorkflowStepType {
@@ -17,20 +18,5 @@ export const schema = gql`
   enum WorkflowStepStatus {
     Pending
     Completed
-  }
-
-  input SendEmailWorkflowStepInput {
-    subject: String!
-    body: String!
-  }
-
-  input CompleteWorkflowStepInput {
-    id: Int!
-    sendEmailInput: SendEmailWorkflowStepInput
-  }
-
-  type Mutation {
-    completeWorkflowStep(input: CompleteWorkflowStepInput!): WorkflowStep!
-      @skipAuth
   }
 `

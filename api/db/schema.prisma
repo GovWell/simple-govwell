@@ -63,10 +63,43 @@ model WorkflowStep {
   recordId Int
 
   // relations
-  record Record  @relation(fields: [recordId], references: [id])
-  emails Email[]
+  record            Record             @relation(fields: [recordId], references: [id])
+  emails            Email[]
+  workflowStepTasks WorkflowStepTask[]
 
   @@index([recordId])
+}
+
+enum WorkflowStepTaskType {
+  Review
+  SendEmail
+  IssueRecord
+}
+
+enum WorkflowStepTaskStatus {
+  Pending
+  Completed
+}
+
+model WorkflowStepTask {
+  id Int @id @default(autoincrement())
+
+  // primitives
+  order  Int // 0-based index
+  status WorkflowStepTaskStatus
+  type   WorkflowStepTaskType
+
+  // timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // foreign keys
+  workflowStepId Int
+
+  // relations
+  workflowStep WorkflowStep @relation(fields: [workflowStepId], references: [id])
+
+  @@index([workflowStepId])
 }
 
 model Email {

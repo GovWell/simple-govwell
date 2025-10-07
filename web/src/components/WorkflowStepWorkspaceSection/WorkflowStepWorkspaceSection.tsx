@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 
-import { CompleteWorkflowStepInput, RecordFragment } from 'types/graphql'
+import { CompleteWorkflowStepTaskInput, RecordFragment } from 'types/graphql'
 
-import { useCompleteWorkflowStep } from 'src/fetch/workflowSteps'
+import { useCompleteWorkflowStepTask } from 'src/fetch/workflowStepTasks'
 import {
   getCurrentWorkflowStep,
   getWorkflowStepDisplayName,
@@ -27,10 +27,10 @@ export default function WorkflowStepWorkspaceSection({
   )
   const current = useMemo(() => getCurrentWorkflowStep(steps), [steps])
 
-  const [completeWorkflowStep, { loading }] = useCompleteWorkflowStep()
+  const [completeWorkflowStepTask, { loading }] = useCompleteWorkflowStepTask()
 
-  const handleCompleted = async (input: CompleteWorkflowStepInput) => {
-    await completeWorkflowStep({ variables: { input } })
+  const handleCompleted = async (input: CompleteWorkflowStepTaskInput) => {
+    await completeWorkflowStepTask({ variables: { input } })
     refetch()
   }
 
@@ -48,22 +48,22 @@ export default function WorkflowStepWorkspaceSection({
             <div>
               {current.type === 'SendEmail' && (
                 <SendEmailWorkspace
-                  workflowStepId={current.id}
-                  onWorkflowStepCompleted={handleCompleted}
+                  workflowStep={current}
+                  onWorkflowStepTaskCompleted={handleCompleted}
                   loading={loading}
                 />
               )}
               {current.type === 'Review' && (
                 <ReviewWorkspace
-                  workflowStepId={current.id}
-                  onWorkflowStepCompleted={handleCompleted}
+                  workflowStep={current}
+                  onWorkflowStepTaskCompleted={handleCompleted}
                   loading={loading}
                 />
               )}
               {current.type === 'IssueRecord' && (
                 <IssueRecordWorkspace
-                  workflowStepId={current.id}
-                  onWorkflowStepCompleted={handleCompleted}
+                  workflowStep={current}
+                  onWorkflowStepTaskCompleted={handleCompleted}
                   loading={loading}
                 />
               )}
