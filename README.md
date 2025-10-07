@@ -32,7 +32,7 @@ yarn rw dev
 
 - **Record**: Top‑level entity representing a case, permit, business license, etc that is being processed by the government jurisdiction. A `Record` has many `WorkflowSteps`.
 - **WorkflowStep**: A stage in the record’s lifecycle. Fields include `order` (0‑based index), `type` (`Review`, `SendEmail`, `IssueRecord`), and `status` (`Pending`, `Completed`). Each `WorkflowStep` belongs to a single `Record` and has many `WorkflowStepTasks`.
-- **WorkflowStepTask**: The smallest actionable unit inside a step. Fields include `order`, `type`, and `status`. Each task belongs to a single `WorkflowStep`.
+- **WorkflowStepTask**: A single actionable work item inside a workflow step. Fields include `order`, `type`, and `status`. Each task belongs to a single `WorkflowStep`.
 
 ### Relationships
   - One `Record` → many `WorkflowSteps` (`recordId` foreign key on `WorkflowStep`).
