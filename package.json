@@ -28,7 +28,6 @@
   "packageManager": "yarn@4.6.0",
   "resolutions": {
     "@prisma/client": "6.10.1",
-    "prisma": "6.10.1",
-    "@storybook/react-dom-shim@npm:7.6.20": "https://verdaccio.tobbe.dev/@storybook/react-dom-shim/-/react-dom-shim-8.0.8.tgz"
+    "prisma": "6.10.1"
   }
 }
