@@ -27,6 +27,7 @@ yarn rw dev
 - `yarn mig`: Applies Prisma migrations to the development SQLite database and regenerates the Prisma Client; if configured, it also runs the seed script.
 - `yarn gql`: Generates type‑safe GraphQL TypeScript definitions for both sides at `api/types/graphql.d.ts` and `web/types/graphql.d.ts`.
 - `yarn rw dev`: Starts both the API GraphQL server and the Vite‑powered web dev server with hot reload, available at http://localhost:8910.
+- `yarn rw prisma studio`: Starts a local SQL DB explorer.
 
 ## System Architecture
 
