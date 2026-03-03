@@ -49,6 +49,19 @@ export const createWorkflowStep = async (input: CreateWorkflowStepParams) => {
       })
       break
     }
+    case WorkflowStepType.Payment: {
+      await createWorkflowStepTask({
+        type: WorkflowStepTaskType.Payment,
+        workflowStepId: workflowStep.id,
+        order: 0,
+      })
+      await createWorkflowStepTask({
+        type: WorkflowStepTaskType.Payment,
+        workflowStepId: workflowStep.id,
+        order: 1,
+      })
+      break
+    }
   }
 
   return workflowStep

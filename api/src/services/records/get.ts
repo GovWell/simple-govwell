@@ -14,7 +14,7 @@ export const getRecords: QueryResolvers['getRecords'] = async () => {
 export const getRecord: QueryResolvers['getRecord'] = async ({ id }) => {
   const record = await db.record.findUniqueOrThrow({
     where: { id: id },
-    include: { workflowSteps: { include: { workflowStepTasks: true } } },
+    include: { workflowSteps: { include: { workflowStepTasks: true, payments: true } } },
   })
 
   return record

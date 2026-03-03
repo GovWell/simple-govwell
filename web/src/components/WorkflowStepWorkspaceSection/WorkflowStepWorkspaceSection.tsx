@@ -9,6 +9,7 @@ import {
 } from 'src/utils/workflow-step-utils'
 
 import IssueRecordWorkspace from './WorkflowStepWorkspaces/IssueRecordWorkspace'
+import PaymentWorkspace from './WorkflowStepWorkspaces/PaymentWorkspace'
 import ReviewWorkspace from './WorkflowStepWorkspaces/ReviewWorkspace'
 import SendEmailWorkspace from './WorkflowStepWorkspaces/SendEmailWorkspace'
 
@@ -62,6 +63,13 @@ export default function WorkflowStepWorkspaceSection({
               )}
               {current.type === 'IssueRecord' && (
                 <IssueRecordWorkspace
+                  workflowStep={current}
+                  onWorkflowStepTaskCompleted={handleCompleted}
+                  loading={loading}
+                />
+              )}
+              {current.type === 'Payment' && (
+                <PaymentWorkspace
                   workflowStep={current}
                   onWorkflowStepTaskCompleted={handleCompleted}
                   loading={loading}

@@ -12,6 +12,7 @@ export const schema = gql`
     Review
     SendEmail
     IssueRecord
+    Payment
   }
 
   enum WorkflowStepTaskStatus {
@@ -24,9 +25,14 @@ export const schema = gql`
     body: String!
   }
 
+  input PaymentWorkflowStepTaskInput {
+    amount: Float!
+  }
+
   input CompleteWorkflowStepTaskInput {
     id: Int!
     sendEmailInput: SendEmailWorkflowStepTaskInput
+    paymentInput: PaymentWorkflowStepTaskInput
   }
 
   type Mutation {

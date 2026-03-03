@@ -1,4 +1,11 @@
 export const schema = gql`
+  type Payment {
+    id: Int!
+    invoiceAmount: Float!
+    invoicePaid: Boolean!
+    createdAt: DateTime!
+  }
+
   type WorkflowStep {
     id: Int!
     order: Int!
@@ -7,12 +14,14 @@ export const schema = gql`
     createdAt: DateTime!
     updatedAt: DateTime!
     workflowStepTasks: [WorkflowStepTask!]
+    payments: [Payment!]
   }
 
   enum WorkflowStepType {
     Review
     SendEmail
     IssueRecord
+    Payment
   }
 
   enum WorkflowStepStatus {

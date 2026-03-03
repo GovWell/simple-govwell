@@ -11,7 +11,7 @@ import { updateWorkflowStep } from '../workflowSteps/update'
 
 export const completeWorkflowStepTask: MutationResolvers['completeWorkflowStepTask'] =
   async ({ input }) => {
-    const { id, sendEmailInput } = input
+    const { id, sendEmailInput, paymentInput } = input
 
     return db.$transaction(async (tx) => {
       // Load the step with its record and sibling steps
@@ -38,6 +38,35 @@ export const completeWorkflowStepTask: MutationResolvers['completeWorkflowStepTa
             workflowStepId: workflowStepTask.workflowStepId,
           },
         })
+      }
+
+      // Validate inputs for Payment
+      if (workflowStepTask.type === WorkflowStepTaskType.Payment) {
+        const existingPayment = await tx.payment.findFirst({
+          where: { workflowStepId: workflowStepTask.workflowStepId },
+        })
+
+        if (existingPayment) {
+          // Second subtask: mark invoice as paid
+          await tx.payment.update({
+            where: { id: existingPayment.id },
+            data: { invoicePaid: true },
+          })
+        } else {
+          // First subtask: configure invoice
+          if (!paymentInput?.amount || paymentInput.amount <= 0) {
+            throw new Error(
+              'paymentInput with a positive amount is required for configuring an invoice'
+            )
+          }
+
+          await tx.payment.create({
+            data: {
+              invoiceAmount: paymentInput.amount,
+              workflowStepId: workflowStepTask.workflowStepId,
+            },
+          })
+        }
       }
 
       // If IssueRecord, mark record as Issued immediately

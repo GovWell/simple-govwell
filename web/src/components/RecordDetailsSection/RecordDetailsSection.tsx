@@ -10,6 +10,10 @@ interface Props {
   record: NonNullable<GetRecord['getRecord']>
 }
 
+const formatCurrency = (value: number): string => {
+  return `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+}
+
 export default function RecordDetailsSection({ record }: Props) {
   const steps = useMemo(
     () => [...(record.workflowSteps ?? [])],
@@ -18,6 +22,13 @@ export default function RecordDetailsSection({ record }: Props) {
   const total = steps.length
   const current = useMemo(() => getCurrentWorkflowStep(steps), [steps])
   const currentIndex = current ? current.order + 1 : 0
+
+  const paymentData = useMemo(() => {
+    const paymentSteps = steps.filter((s) => s.type === 'Payment')
+    const payments = paymentSteps.flatMap((s) => s.payments ?? [])
+    if (payments.length === 0) return null
+    return payments[0]
+  }, [steps])
 
   return (
     <div className="overflow-hidden rounded-md border bg-white">
@@ -46,6 +57,23 @@ export default function RecordDetailsSection({ record }: Props) {
             </div>
           </div>
         </div>
+
+        {paymentData && paymentData.invoicePaid && (
+          <div className="grid grid-cols-1 gap-6 px-4 py-5 text-sm text-slate-600 md:grid-cols-2">
+            <div>
+              <div className="text-slate-500">Invoice Amount</div>
+              <div className="text-slate-900">
+                {formatCurrency(paymentData.invoiceAmount)}
+              </div>
+            </div>
+            <div>
+              <div className="text-slate-500">Invoice Paid</div>
+              <div className="text-slate-900">
+                {paymentData.invoicePaid ? 'Yes' : 'No'}
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 gap-6 px-4 py-5 text-sm text-slate-600 md:grid-cols-2">
           <div>

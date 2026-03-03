@@ -9,6 +9,15 @@ export const WorkflowStepTaskFragment = gql`
   }
 `
 
+export const PaymentFragment = gql`
+  fragment PaymentFragment on Payment {
+    id
+    invoiceAmount
+    invoicePaid
+    createdAt
+  }
+`
+
 export const WorkflowStepFragment = gql`
   fragment WorkflowStepFragment on WorkflowStep {
     id
@@ -19,6 +28,9 @@ export const WorkflowStepFragment = gql`
     updatedAt
     workflowStepTasks {
       ...WorkflowStepTaskFragment
+    }
+    payments {
+      ...PaymentFragment
     }
   }
 `
@@ -36,6 +48,7 @@ export const RecordFragment = gql`
 `
 
 fragmentRegistry.register(
+  PaymentFragment,
   WorkflowStepFragment,
   RecordFragment,
   WorkflowStepTaskFragment

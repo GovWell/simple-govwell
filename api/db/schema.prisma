@@ -40,6 +40,7 @@ enum WorkflowStepType {
   Review
   SendEmail
   IssueRecord
+  Payment
 }
 
 enum WorkflowStepStatus {
@@ -65,6 +66,7 @@ model WorkflowStep {
   // relations
   record            Record             @relation(fields: [recordId], references: [id])
   emails            Email[]
+  payments          Payment[]
   workflowStepTasks WorkflowStepTask[]
 
   @@index([recordId])
@@ -74,6 +76,7 @@ enum WorkflowStepTaskType {
   Review
   SendEmail
   IssueRecord
+  Payment
 }
 
 enum WorkflowStepTaskStatus {
@@ -98,6 +101,23 @@ model WorkflowStepTask {
 
   // relations
   workflowStep WorkflowStep @relation(fields: [workflowStepId], references: [id])
+
+  @@index([workflowStepId])
+}
+
+model Payment {
+  id Int @id @default(autoincrement())
+
+  // primitives
+  invoiceAmount Float
+  invoicePaid   Boolean @default(false)
+
+  // timestamps
+  createdAt DateTime @default(now())
+
+  // relations
+  workflowStepId Int
+  workflowStep   WorkflowStep @relation(fields: [workflowStepId], references: [id])
 
   @@index([workflowStepId])
 }
